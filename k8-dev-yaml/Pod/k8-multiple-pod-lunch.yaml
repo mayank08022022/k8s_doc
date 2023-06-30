@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multiple-pods-demo
+spec:
+  volumes:
+  - name: shared-date-logs
+    emptyDir: {} 
+  containers:
+  - name: write-dates-container
+    image: alpine
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do date >> /var/log/index.html; sleep 10; done"]
+    volumeMounts:
+    - name: shared-date-logs
+      mountPath: /var/log
+  - name: nginx-to-display-dates
+    image: nginx
+    ports:
+      - containerPort: 80
+    volumeMounts:
+    - name: shared-date-logs
+      mountPath: /usr/share/nginx/html
